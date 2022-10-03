@@ -1,14 +1,11 @@
 name: flutter_e2e
 description: Flutter End-to-end encryption (E2EE)
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/prongbang/flutter_e2e.git
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
   flutter: ">=1.17.0"
-
-dependency_overrides:
-  ffi: ^2.0.1
 
 dependencies:
   flutter:

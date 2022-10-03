@@ -8,7 +8,7 @@ Flutter End-to-end encryption (E2EE)
 
 ```yaml
 dependencies:
-  flutter_e2e: ^1.0.0
+  flutter_e2e: ^1.0.1
 ```
 
 ### Create Key pair
