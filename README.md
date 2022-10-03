@@ -1,6 +1,6 @@
 # flutter_e2e
 
-Flutter End-to-end encryption (E2EE)
+Flutter End-to-end encryption (E2EE) with flutter_sodium
 
 ## Usage
 
