@@ -69,6 +69,11 @@ void main() {
       // Then
       expect(cipherText, isNotEmpty);
       expect(plainText, message);
+      expect(clientSharedKeyPair, serverSharedKeyPair);
+      expect(
+        Sodium.bin2hex(clientSharedKeyPair),
+        Sodium.bin2hex(serverSharedKeyPair),
+      );
     },
   );
 }
