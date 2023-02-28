@@ -1,5 +1,5 @@
-import 'dart:typed_data';
+import 'package:flutter_e2e/src/e2e/key/shared_key.dart';
 
 abstract class E2eSharedKey {
-  Uint8List sharedKey();
+  SharedKey sharedKey();
 }

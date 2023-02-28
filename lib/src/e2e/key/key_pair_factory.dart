@@ -1,5 +1,5 @@
-import 'package:flutter_sodium/flutter_sodium.dart';
+import 'package:flutter_e2e/src/e2e/key/sodium_key_pair.dart' as k;
 
 abstract class KeyPairFactory {
-  KeyPair create();
+  k.SodiumKeyPair create();
 }

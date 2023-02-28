@@ -7,10 +7,14 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.17.0"
 
+dependency_overrides:
+  ffi: ^2.0.1
+
 dependencies:
   flutter:
     sdk: flutter
   flutter_sodium: ^0.2.0
+  sodium_libs: ^2.0.0
 
 dev_dependencies:
   flutter_test:
