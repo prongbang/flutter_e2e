@@ -14,6 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   sodium_libs: ^2.1.1+3
+  sodium: ^2.1.1
 
 dev_dependencies:
   flutter_test:

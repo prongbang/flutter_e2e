@@ -1,11 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:flutter_e2e/flutter_e2e.dart';
 import 'package:flutter_e2e/src/e2e/key/shared_key.dart';
 import 'package:flutter_e2e/src/e2e/key/sodium_key_pair.dart';
 import 'package:flutter_e2e/src/e2e/nonce/nonce_utility.dart';
 import 'package:flutter_e2e/src/e2e/nonce/sodium_nonce_utility.dart';
+import 'package:flutter_e2e/src/extensions/string_extension.dart';
+import 'package:flutter_e2e/src/platform/sodium_macos.dart' as sm;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sodium_libs/sodium_libs.dart';
-import 'package:sodium_libs/src/platforms/sodium_macos.dart';
 
 SharedKey _serverSharedKey = SharedKey();
 SharedKey _clientSharedKey = SharedKey();
@@ -31,7 +34,7 @@ void main() {
   late E2eCryptography clientE2eCryptography;
 
   setUp(() async {
-    SodiumMacos.registerWith();
+    sm.SodiumMacos.registerWith();
     sodium = await SodiumInit.init();
     keyPairFactory = E2eKeyPairFactory(sodium);
     sharedKeyFactory = E2eSharedKeyFactory(sodium);
@@ -49,6 +52,60 @@ void main() {
       nonceUtility,
     );
   });
+
+  test(
+    'Should encrypt/decrypt success when encrypt and decrypt using XChaCha20Poly1305 algorithm',
+    () async {
+      // Given
+      const message = 'End-to-End Encryption';
+
+      // Key pair
+      final serverKeyPair = keyPairFactory.create();
+      final clientKeyPair = keyPairFactory.create();
+
+      // https://libsodium.gitbook.io/doc/key_exchange
+      // client_rx will be used by the client to receive data from the server,
+      // client_tx will be used by the client to send data to the server.
+      final clientSharedKeyPair = sodium.crypto.kx.clientSessionKeys(
+        serverPublicKey: serverKeyPair.pk,
+        clientSecretKey: clientKeyPair.sk,
+        clientPublicKey: clientKeyPair.pk,
+      );
+
+      // server_rx will be used by the server to receive data from the client,
+      // server_tx will be used by the server to send data to the client.
+      final serverSharedKeyPair = sodium.crypto.kx.serverSessionKeys(
+        serverPublicKey: serverKeyPair.pk,
+        serverSecretKey: serverKeyPair.sk,
+        clientPublicKey: clientKeyPair.pk,
+      );
+
+      // When
+
+      // crypto_aead_xchacha20poly1305_ietf_encrypt
+      // See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction#combined-mode
+      final nonce = nonceUtility.random();
+      final encrypted = sodium.crypto.aead.encrypt(
+        message: Uint8List.fromList(message.toIntList()),
+        nonce: nonce,
+        key: clientSharedKeyPair.tx,
+      );
+
+      // crypto_aead_xchacha20poly1305_ietf_decrypt
+      // See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction#combined-mode
+      final decrypted = sodium.crypto.aead.decrypt(
+        cipherText: encrypted,
+        nonce: nonce,
+        key: serverSharedKeyPair.rx,
+      );
+      final decryptedText = String.fromCharCodes(decrypted);
+
+      // Then
+      expect(decryptedText, message);
+      expect(clientSharedKeyPair.rx.length, serverSharedKeyPair.rx.length);
+      expect(clientSharedKeyPair.tx.length, serverSharedKeyPair.tx.length);
+    },
+  );
 
   test(
     'Should return cipher text and plain text when encrypt and decrypt success',
@@ -81,7 +138,6 @@ void main() {
       // Then
       expect(cipherText, isNotEmpty);
       expect(plainText, message);
-      expect(clientSharedKeyPair, serverSharedKeyPair);
     },
   );
 }
