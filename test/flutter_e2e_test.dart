@@ -5,6 +5,7 @@ import 'package:flutter_e2e/src/e2e/nonce/nonce_utility.dart';
 import 'package:flutter_e2e/src/e2e/nonce/sodium_nonce_utility.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sodium_libs/sodium_libs.dart';
+import 'package:sodium_libs/src/platforms/sodium_macos.dart';
 
 SharedKey _serverSharedKey = SharedKey();
 SharedKey _clientSharedKey = SharedKey();
@@ -30,6 +31,7 @@ void main() {
   late E2eCryptography clientE2eCryptography;
 
   setUp(() async {
+    SodiumMacos.registerWith();
     sodium = await SodiumInit.init();
     keyPairFactory = E2eKeyPairFactory(sodium);
     sharedKeyFactory = E2eSharedKeyFactory(sodium);
