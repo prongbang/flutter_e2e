@@ -10,9 +10,11 @@ class SodiumE2eCryptography implements E2eCryptography {
 
   @override
   Future<String> decrypt(String cipherText) async {
-    final noneHex = cipherText.substring(0, E2eCryptography.nonceLength);
+    final noneHex =
+        cipherText.substring(0, Sodium.cryptoSecretboxNoncebytes * 2);
     final nonce = Sodium.hex2bin(noneHex);
-    final encryptedHex = cipherText.substring(E2eCryptography.nonceLength);
+    final encryptedHex =
+        cipherText.substring(Sodium.cryptoSecretboxNoncebytes * 2);
     final encrypted = Sodium.hex2bin(encryptedHex);
     final plainText = Sodium.cryptoSecretboxOpenEasy(
       encrypted,
