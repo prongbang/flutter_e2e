@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_e2e/flutter_e2e.dart';
+import 'package:flutter_e2e/src/e2e/sodium_secret_box_e2e_cryptography.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -34,8 +35,8 @@ void main() {
     serverE2eSharedKey = ServerE2eSharedKey();
     clientE2eSharedKey = ClientE2eSharedKey();
 
-    serverE2eCryptography = SodiumE2eCryptography(serverE2eSharedKey);
-    clientE2eCryptography = SodiumE2eCryptography(clientE2eSharedKey);
+    serverE2eCryptography = SodiumSecretBoxE2eCryptography(serverE2eSharedKey);
+    clientE2eCryptography = SodiumSecretBoxE2eCryptography(clientE2eSharedKey);
   });
 
   test(
